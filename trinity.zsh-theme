@@ -2,8 +2,20 @@
 # Based on geometry
 # geometry: https://github.com/frmendes/geometry
 
-PROMPT_OK="%{$fg_bold[green]%}⟁%{$reset_color%}"
-PROMPT_FAIL="%{$fg_bold[red]%}⟁%{$reset_color%}"
+PROMPT_LOCAL="⟁"
+PROMPT_SSH="▽"
+
+_prompt() {
+    if [[ -n $SSH_CONNECTION ]]; then
+        echo $PROMPT_SSH
+    else
+        echo $PROMPT_LOCAL
+    fi
+}
+
+PROMPT_OK="%{$fg_bold[green]%}$(_prompt)%{$reset_color%}"
+PROMPT_FAIL="%{$fg_bold[red]%}$(_prompt)%{$reset_color%}"
+
 PROMPT_LINE='◈'
 
 GIT_DIRTY="%{$fg[red]%}⬡%{$reset_color%}"
