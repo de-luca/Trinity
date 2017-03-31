@@ -13,8 +13,8 @@ _prompt() {
     fi
 }
 
-PROMPT_OK="%{$fg_bold[green]%}$(_prompt)%{$reset_color%}"
-PROMPT_FAIL="%{$fg_bold[red]%}$(_prompt)%{$reset_color%}"
+PROMPT_OK="%{$fg[green]%}$(_prompt)%{$reset_color%}"
+PROMPT_FAIL="%{$fg[red]%}$(_prompt)%{$reset_color%}"
 
 PROMPT_LINE='◈'
 
