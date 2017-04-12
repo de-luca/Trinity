@@ -76,18 +76,19 @@ _git_info() {
   fi
 }
 
-_print_title() {
+_print_title() {}
+
+_set_cmd_title() {
   print -n '\e]0;'
-  print -Pn $1
+  print -n "$2 @ "
+  print -nrD "$PWD"
   print -n '\a'
 }
 
-_set_cmd_title() {
-  _print_title "${2} @ %m"
-}
-
 _set_title() {
-  _print_title '%~'
+  print -n '\e]0;'
+  print -Pn '%~'
+  print -n '\a'
 }
 
 trinity_prompt() {
