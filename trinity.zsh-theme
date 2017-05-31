@@ -18,6 +18,32 @@ PROMPT_FAIL="%{$fg[red]%}$(_prompt)%{$reset_color%}"
 
 PROMPT_LINE='◈'
 
+_host() {
+    host_string=""
+
+    if [[ $LOGNAME != $USER ]] || [[ $UID == 0 ]] || [[ -n $SSH_CONNECTION ]]; then
+        host_string="${host_string}["
+
+        if [[ $USER == 'root' ]]; then
+            host_string="${host_string}%{$fg[red]%}$USER%{$reset_color%}"
+        else
+            host_string="${host_string}$USER"
+        fi
+
+        if [[ $LOGNAME == $USER ]] || [[ $UID == 0 ]] && [[ -n $SSH_CONNECTION ]]; then
+            host_string="${host_string}@"
+        fi
+
+        if [[ -n $SSH_CONNECTION ]]; then
+            host_string="${host_string}%m"
+        fi
+
+        host_string="${host_string}]"
+    fi
+
+    echo $host_string
+}
+
 GIT_DIRTY="%{$fg[red]%}⬡%{$reset_color%}"
 GIT_CLEAN="%{$fg[green]%}⬢%{$reset_color%}"
 GIT_REBASE="\uE0A0"
@@ -31,7 +57,7 @@ _git_branch() {
 }
 
 _git_dirty() {
-  if test -z "$(git status --porcelain --ignore-submodules)"; then
+  if test -z "$(git status --porcelain --ignore-submodules 2> /dev/null)"; then
     echo $GIT_CLEAN
   else
     echo $GIT_DIRTY
@@ -39,7 +65,7 @@ _git_dirty() {
 }
 
 _git_rebase_check() {
-  git_dir=$(git rev-parse --git-dir)
+  git_dir=$(git rev-parse --git-dir 2> /dev/null)
   if test -d "$git_dir/rebase-merge" -o -d "$git_dir/rebase-apply"; then
     echo " $GIT_REBASE"
   fi
@@ -97,7 +123,7 @@ trinity_prompt() {
   add-zsh-hook preexec  _set_cmd_title
   add-zsh-hook precmd   _set_title
 
-  PROMPT='%(?.$PROMPT_OK.$PROMPT_FAIL) %{$fg[blue]%}%3~%{$reset_color%} '
+  PROMPT='%(?.$PROMPT_OK.$PROMPT_FAIL) $(_host)%{$fg[blue]%}%3~%{$reset_color%} '
   PROMPT2='$PROMPT_LINE '
   RPROMPT='$(_git_info)'
 }
