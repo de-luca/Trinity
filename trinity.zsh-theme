@@ -38,7 +38,7 @@ _host() {
             host_string="${host_string}%m"
         fi
 
-        host_string="${host_string}]"
+        host_string="${host_string}] "
     fi
 
     echo $host_string
