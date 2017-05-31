@@ -22,23 +22,23 @@ _host() {
     host_string=""
 
     if [[ $LOGNAME != $USER ]] || [[ $UID == 0 ]] || [[ -n $SSH_CONNECTION ]]; then
-        host_string="${host_string}["
+        host_string="${host_string}%B[%b"
 
         if [[ $USER == 'root' ]]; then
-            host_string="${host_string}%{$fg[red]%}$USER%{$reset_color%}"
+            host_string="${host_string}%{$fg[red]%}%B$USER%b%{$reset_color%}"
         else
             host_string="${host_string}$USER"
         fi
 
         if [[ $LOGNAME == $USER ]] || [[ $UID == 0 ]] && [[ -n $SSH_CONNECTION ]]; then
-            host_string="${host_string}@"
+            host_string="${host_string}%B@%b"
         fi
 
         if [[ -n $SSH_CONNECTION ]]; then
             host_string="${host_string}%m"
         fi
 
-        host_string="${host_string}] "
+        host_string="${host_string}%B]%b "
     fi
 
     echo $host_string
