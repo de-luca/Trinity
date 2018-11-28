@@ -5,7 +5,7 @@
 PROMPT_LOCAL="⟁"
 PROMPT_SSH="▽"
 
-_prompt() {
+trinity_prompt() {
     if [[ -n $SSH_CONNECTION ]]; then
         echo $PROMPT_SSH
     else
@@ -13,12 +13,12 @@ _prompt() {
     fi
 }
 
-PROMPT_OK="%{$fg[green]%}$(_prompt)%{$reset_color%}"
-PROMPT_FAIL="%{$fg[red]%}$(_prompt)%{$reset_color%}"
+PROMPT_OK="%{$fg[green]%}$(trinity_prompt)%{$reset_color%}"
+PROMPT_FAIL="%{$fg[red]%}$(trinity_prompt)%{$reset_color%}"
 
 PROMPT_LINE='◈'
 
-_host() {
+trinity_host() {
     host_string=""
 
     if [[ $LOGNAME != $USER ]] || [[ $UID == 0 ]] || [[ -n $SSH_CONNECTION ]]; then
@@ -50,13 +50,13 @@ GIT_REBASE="\uE0A0"
 GIT_UNPULLED="⇣"
 GIT_UNPUSHED="⇡"
 
-_git_branch() {
+trinity_git_branch() {
   ref=$(git symbolic-ref HEAD 2> /dev/null) || \
   ref=$(git rev-parse --short HEAD 2> /dev/null) || return
   echo "${ref#refs/heads/}"
 }
 
-_git_dirty() {
+trinity_git_dirty() {
   if test -z "$(git status --porcelain --ignore-submodules 2> /dev/null)"; then
     echo $GIT_CLEAN
   else
@@ -64,14 +64,14 @@ _git_dirty() {
   fi
 }
 
-_git_rebase_check() {
+trinity_git_rebase_check() {
   git_dir=$(git rev-parse --git-dir 2> /dev/null)
   if test -d "$git_dir/rebase-merge" -o -d "$git_dir/rebase-apply"; then
     echo " $GIT_REBASE"
   fi
 }
 
-_git_remote_check() {
+trinity_git_remote_check() {
   local_commit=$(git rev-parse @ 2>&1)
   remote_commit=$(git rev-parse @{u} 2>&1)
   common_base=$(git merge-base @ @{u} 2>&1)
@@ -89,43 +89,46 @@ _git_remote_check() {
   fi
 }
 
-_git_symbol() {
-  text="$(_git_rebase_check)$(_git_remote_check)"
+trinity_git_symbol() {
+  text="$(trinity_git_rebase_check)$(trinity_git_remote_check)"
   if [ ! -z "$text" ]; then
     echo " %F{242}::%{$reset_color%}$text"
   fi
 }
 
-_git_info() {
+trinity_git_info() {
   if git rev-parse --git-dir > /dev/null 2>&1; then
-    echo "$(_git_branch)$(_git_symbol) %F{242}::%{$reset_color%} $(_git_dirty)"
+    echo "$(trinity_git_branch)$(trinity_git_symbol) %F{242}::%{$reset_color%} $(trinity_git_dirty)"
   fi
 }
 
-_print_title() {}
+#_print_title() {}
 
-_set_cmd_title() {
+trinity_set_cmd_title() {
   print -n '\e]0;'
   print -n "$2 @ "
   print -nrD "$PWD"
   print -n '\a'
 }
 
-_set_title() {
+trinity_set_title() {
   print -n '\e]0;'
   print -Pn '%~'
   print -n '\a'
 }
 
-trinity_prompt() {
-  autoload -U add-zsh-hook
-
-  add-zsh-hook preexec  _set_cmd_title
-  add-zsh-hook precmd   _set_title
-
-  PROMPT='%(?.$PROMPT_OK.$PROMPT_FAIL) $(_host)%{$fg[blue]%}%3~%{$reset_color%} '
+trinity_render() {
+  PROMPT='%(?.$PROMPT_OK.$PROMPT_FAIL) $(trinity_host)%{$fg[blue]%}%3~%{$reset_color%} '
   PROMPT2='$PROMPT_LINE '
-  RPROMPT='$(_git_info)'
+  RPROMPT='$(trinity_git_info)'
 }
 
-trinity_prompt
+trinity_setup() {
+  autoload -U add-zsh-hook
+
+  add-zsh-hook preexec  trinity_set_cmd_title
+  add-zsh-hook precmd   trinity_set_title
+  add-zsh-hook precmd   trinity_render
+}
+
+trinity_setup
