@@ -1,6 +1,6 @@
 # ⟁ Trinity ⟁
 # Based on geometry
-# geometry: https://github.com/frmendes/geometry
+# geometry: https://github.com/geometry-zsh/geometry
 
 PROMPT_LOCAL="⟁"
 PROMPT_SSH="▽"
@@ -101,8 +101,6 @@ trinity_git_info() {
     echo "$(trinity_git_branch)$(trinity_git_symbol) %F{242}::%{$reset_color%} $(trinity_git_dirty)"
   fi
 }
-
-#_print_title() {}
 
 trinity_set_cmd_title() {
   print -n '\e]0;'
