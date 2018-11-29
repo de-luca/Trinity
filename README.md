@@ -2,7 +2,7 @@
 
 A simple and minimal zsh theme based on an old version of [geometry](https://github.com/geometry-zsh/geometry).
 
-![screenshot](screenshot.png)
+![screenshot](Screenshot.png)
 The font used in the screenshot is [Fira Code Retina](https://github.com/tonsky/FiraCode)
 
 ## Features
